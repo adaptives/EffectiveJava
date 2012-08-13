@@ -6,7 +6,6 @@ import java.util.concurrent.CountDownLatch;
 
 public final class IncorrectConcurrencyExample {
     private int counter = 0;
-    private final Object mutex = new Object();
     private final int workers;
     private final CountDownLatch latch;
 
@@ -34,7 +33,7 @@ public final class IncorrectConcurrencyExample {
         }
 
         System.out.println("Counter: " + counter);
-    } 
+    }
 
     public static void main(String[] args) {
         for (int i = 1; i <= 10; i++) {
@@ -54,9 +53,7 @@ public final class IncorrectConcurrencyExample {
             }
 
             for (int i = 1; i <= 100000; i++) {
-                //synchronized (mutex) {
-                    counter++;
-                //}
+                counter++;
             }
         }
     }
