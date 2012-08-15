@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 public final class IncorrectConcurrencyExample {
-    private int counter = 0;
+    private long counter = 0;
     private final int workers;
     private final CountDownLatch latch;
 
