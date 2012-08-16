@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.CyclicBarrier;
 
 import performance.AbstractBenchmark;
 
@@ -16,7 +17,7 @@ public final class SynchronizationBasedReaderWriterBenchmark extends AbstractBen
     private long waitBetweenIterations;
     private Collection<Integer> sharedData;
     private List<Thread> threads = new ArrayList<Thread>();
-    private final CountDownLatch latch;
+    private final CyclicBarrier barrier;
 
     public SynchronizationBasedReaderWriterBenchmark(int readers, int writers, int readerIterations, int writerIterations,
             Collection<Integer> sharedData, long waitBetweenIterations) {
@@ -27,7 +28,7 @@ public final class SynchronizationBasedReaderWriterBenchmark extends AbstractBen
         this.writerIterations = writerIterations;
         this.sharedData = sharedData;
         this.waitBetweenIterations = waitBetweenIterations;
-        this.latch = new CountDownLatch(readers + writers);
+        this.barrier = new CyclicBarrier(readers + writers);
     }
 
     @Override
@@ -62,10 +63,11 @@ public final class SynchronizationBasedReaderWriterBenchmark extends AbstractBen
     private final class Reader implements Runnable {
         @Override
         public void run() {
-            latch.countDown();
             try {
-                latch.await();
+                barrier.await();
             } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (BrokenBarrierException e) {
                 e.printStackTrace();
             }
 
@@ -92,10 +94,11 @@ public final class SynchronizationBasedReaderWriterBenchmark extends AbstractBen
     private final class Writer implements Runnable {
         @Override
         public void run() {
-            latch.countDown();
             try {
-                latch.await();
+                barrier.await();
             } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (BrokenBarrierException e) {
                 e.printStackTrace();
             }
 

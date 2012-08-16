@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -19,7 +21,7 @@ public final class ReadWriteLockBasedReaderWriterBenchmark extends AbstractBench
     private Collection<Integer> sharedData;
     private List<Thread> threads = new ArrayList<Thread>();
     private ReadWriteLock lock = new ReentrantReadWriteLock();
-    private final CountDownLatch latch;
+    private final CyclicBarrier barrier;
 
     public ReadWriteLockBasedReaderWriterBenchmark(int readers, int writers, int readerIterations, int writerIterations,
             Collection<Integer> sharedData, long waitBetweenIterations) {
@@ -30,7 +32,7 @@ public final class ReadWriteLockBasedReaderWriterBenchmark extends AbstractBench
         this.writerIterations = writerIterations;
         this.sharedData = sharedData;
         this.waitBetweenIterations = waitBetweenIterations;
-        this.latch = new CountDownLatch(readers + writers);
+        this.barrier = new CyclicBarrier(readers + writers);
     }
 
 
@@ -69,11 +71,14 @@ public final class ReadWriteLockBasedReaderWriterBenchmark extends AbstractBench
     private final class Reader implements Runnable {
         @Override
         public void run() {
-            latch.countDown();
             try {
-                latch.await();
+                barrier.await();
             } catch (InterruptedException e) {
                 e.printStackTrace();
+                return;
+            } catch (BrokenBarrierException e) {
+                e.printStackTrace();
+                return;
             }
 
             for (int i = 1; i <= readerIterations; i++) {
@@ -100,11 +105,14 @@ public final class ReadWriteLockBasedReaderWriterBenchmark extends AbstractBench
     private final class Writer implements Runnable {
         @Override
         public void run() {
-            latch.countDown();
             try {
-                latch.await();
+                barrier.await();
             } catch (InterruptedException e) {
                 e.printStackTrace();
+                return;
+            } catch (BrokenBarrierException e) {
+                e.printStackTrace();
+                return;
             }
 
             for (int i = 1; i <= writerIterations; i++) {
