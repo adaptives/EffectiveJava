@@ -1,7 +1,6 @@
 package performance.memorymappedio;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.RandomAccessFile;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;

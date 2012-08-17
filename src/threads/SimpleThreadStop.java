@@ -1,6 +1,5 @@
 package threads;
 
-import java.io.PrintStream;
 
 public final class SimpleThreadStop {
 
