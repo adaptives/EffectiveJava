@@ -4,7 +4,7 @@ public abstract class AbstractBenchmark implements Benchmark {
     private long runDuration;
 
     @Override
-    public synchronized void run() {
+    public final synchronized void run() {
         init();
         try {
             long start = System.currentTimeMillis();
@@ -18,7 +18,7 @@ public abstract class AbstractBenchmark implements Benchmark {
     }
 
     @Override
-    public synchronized long getRunDuration() {
+    public final synchronized long getRunDuration() {
         return runDuration;
     }
 

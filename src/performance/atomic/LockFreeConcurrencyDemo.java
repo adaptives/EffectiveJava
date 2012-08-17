@@ -9,15 +9,17 @@ public final class LockFreeConcurrencyDemo {
         int iterations = 500000;
 
         for (int i = 1; i <= 5; i++) {
-            Benchmark b = new SynchronizationBasedIdGeneratorBenchmark(workers, iterations);
+            IdGenerator idgen = new ThreadSafeIdGenerator();
+            Benchmark b = new IdGeneratorBenchmark(idgen, workers, iterations);
             b.run();
-            System.out.println(b.getClass().getSimpleName() + " took " + b.getRunDuration() + "ms");
+            System.out.println(idgen.getClass().getSimpleName() + " took " + b.getRunDuration() + "ms");
         }
 
         for (int i = 1; i <= 5; i++) {
-            Benchmark b = new AtomicLongBasedIdGeneratorBenchmark(workers, iterations);
+            IdGenerator idgen = new LockFreeIdGenerator();
+            Benchmark b = new IdGeneratorBenchmark(idgen, workers, iterations);
             b.run();
-            System.out.println(b.getClass().getSimpleName() + " took " + b.getRunDuration() + "ms");
+            System.out.println(idgen.getClass().getSimpleName() + " took " + b.getRunDuration() + "ms");
         }
     }
 }

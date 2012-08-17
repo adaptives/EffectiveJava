@@ -2,30 +2,24 @@ package performance.atomic;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.CyclicBarrier;
 
 import performance.AbstractBenchmark;
 
-public final class SynchronizationBasedIdGeneratorBenchmark extends AbstractBenchmark {
-    private long id = 0;
-    private final Object mutex = new Object();
-    private final CountDownLatch latch;
+public class IdGeneratorBenchmark extends AbstractBenchmark {
     private final int workers;
     private final int iterations;
     private final List<Thread> threads = new ArrayList<Thread>();
-
+    private final CyclicBarrier barrier;
+    private final IdGenerator idgen;
     
-    public SynchronizationBasedIdGeneratorBenchmark(int workers, int iterations) {
+    public IdGeneratorBenchmark(IdGenerator idgen, int workers, int iterations) {
         super();
+        this.idgen = idgen;
         this.workers = workers;
-        this.latch = new CountDownLatch(workers);
+        this.barrier = new CyclicBarrier(workers);
         this.iterations = iterations;
-    }
-
-    public long nextId() {
-        synchronized (mutex) {
-            return id++;
-        }
     }
 
     @Override
@@ -54,15 +48,18 @@ public final class SynchronizationBasedIdGeneratorBenchmark extends AbstractBenc
     private final class Worker implements Runnable {
         @Override
         public void run() {
-            latch.countDown();
             try {
-                latch.await();
+                barrier.await();
             } catch (InterruptedException e) {
                 e.printStackTrace();
+                return;
+            } catch (BrokenBarrierException e) {
+                e.printStackTrace();
+                return;
             }
 
             for (int i = 1; i <= iterations; i++) {
-                nextId();
+                idgen.nextId();
             }
         }
     }
