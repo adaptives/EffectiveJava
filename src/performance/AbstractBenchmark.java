@@ -1,5 +1,9 @@
 package performance;
 
+/**
+ * Provides a skeleton implementation for the Benchmark. 
+ *
+ */
 public abstract class AbstractBenchmark implements Benchmark {
     private long runDuration;
 
@@ -22,5 +26,9 @@ public abstract class AbstractBenchmark implements Benchmark {
         return runDuration;
     }
 
+    /**
+     * Should be implemented by classes extending this class to put the logic of running the benchmark.
+     * @throws Exception
+     */
     protected abstract void runBenchmark() throws Exception;
 }

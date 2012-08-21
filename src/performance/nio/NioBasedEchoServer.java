@@ -178,7 +178,6 @@ public final class NioBasedEchoServer implements Runnable, EchoServer {
                     //System.out.println("Before slide: " + new String(data));
                     slide(i);
                     //System.out.println("After slide: " + new String(data));
-
                     return true;
                 }
             }
@@ -219,7 +218,7 @@ public final class NioBasedEchoServer implements Runnable, EchoServer {
         @Override
         public void run() {
             try {
-                if (context.read() != -1) {
+                if (context.read() > 0) {
                     while (context.sendResponse())
                         ;
                 } else {

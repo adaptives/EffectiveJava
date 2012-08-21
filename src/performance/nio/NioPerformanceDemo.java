@@ -11,19 +11,23 @@ public final class NioPerformanceDemo {
      */
     public static void main(String[] args) throws Exception {
         int port = 5000;
-        int serverRequestHandlerThreads = 2;
+        int serverRequestHandlerThreads = 1;
         int clientThreads = 100;
         int clientIterations = 10;
         boolean waitBetweenIterations = true;
+
+        // Wait duration in nanoseconds.
         long waitDuration = 10000000;
         ExecutorService executor = Executors.newFixedThreadPool(serverRequestHandlerThreads);
 
         for (int i = 1; i <= 5; i++) {
             EchoServer server = new SimpleEchoServer(executor, port);
+            server.start();
             EchoServerBenchmark b = new EchoServerBenchmark(server, clientThreads, clientIterations, port, waitBetweenIterations, waitDuration);
             b.run();
             System.out.println(server.getClass().getSimpleName() + " took " + b.getRunDuration() + "ms");
         }
+
         executor.shutdown();
 
         executor = Executors.newFixedThreadPool(serverRequestHandlerThreads);

@@ -3,8 +3,13 @@ package threads;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This example demonstrates the use and need of Thread.join() method with use
+ * of a hypothetical Parking Lot.
+ * 
+ */
 public final class ImportanceOfJoinExample {
-    
+
     public static void main(String[] args) {
         ParkingLot parkingLot = new ParkingLot(2);
 
@@ -21,6 +26,15 @@ public final class ImportanceOfJoinExample {
         parkingLot.close();
     }
 
+    /**
+     * A hypothetical Parking Lot which has multiple entrances represented by
+     * {@link ParkingLotEntrance}. Each parking lot entrance is a thread which
+     * will wait for a car and then park the car in the parking lot. The parking
+     * lot can be opened and closed. Opening the parking lot subsequently opens
+     * all the entrances i.e. starts the entrance threads. Closing the parking
+     * lot sets the state of the parking lot as closed and no more cars can be
+     * parked after the parking lot is closed.
+     */
     private static final class ParkingLot {
         private int currentlyParked;
         private boolean closed = false;
@@ -30,7 +44,7 @@ public final class ImportanceOfJoinExample {
             super();
             this.entrances = new ArrayList<ParkingLotEntrance>(totalEntrances);
 
-            for (int i = 1; i<= totalEntrances; i++) {
+            for (int i = 1; i <= totalEntrances; i++) {
                 entrances.add(new ParkingLotEntrance(this, "Entrance-" + i));
             }
         }
@@ -51,6 +65,7 @@ public final class ImportanceOfJoinExample {
 
         public void park() {
             if (closed) {
+                // Parking lot is closed, throw an exception.
                 throw new IllegalStateException("Parking Lot is CLOSED!");
             }
 
@@ -59,6 +74,9 @@ public final class ImportanceOfJoinExample {
         }
     }
 
+    /**
+     * Represents the Entrance of the Parking Lot.
+     */
     private static final class ParkingLotEntrance implements Runnable {
         private final ParkingLot parkingLot;
         private boolean closed = false;
@@ -70,7 +88,7 @@ public final class ImportanceOfJoinExample {
             this.parkingLot = parkingLot;
             thread = new Thread(this, name);
         }
-        
+
         @Override
         public void run() {
             while (!closed) {

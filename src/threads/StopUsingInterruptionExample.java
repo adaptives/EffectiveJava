@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
+/**
+ * 
+ */
 public final class StopUsingInterruptionExample {
     public static void main(String[] args) throws IOException {
         BlockingQueue<Integer> queue = new ArrayBlockingQueue<Integer>(5);

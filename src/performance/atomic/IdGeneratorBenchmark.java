@@ -48,6 +48,9 @@ public class IdGeneratorBenchmark extends AbstractBenchmark {
     private final class Worker implements Runnable {
         @Override
         public void run() {
+            // Ensures that all the worker threads start and wait at the barrier
+            // and only proceed when all the other workers have reached this
+            // barrier.
             try {
                 barrier.await();
             } catch (InterruptedException e) {
