@@ -8,13 +8,28 @@ import java.util.concurrent.CyclicBarrier;
 
 import performance.AbstractBenchmark;
 
+/**
+ * Abstraction for the locking benchmark. Provides the boiler plate code for reader / writer threads.
+ */
 public abstract class AbstractLockingBenchmark extends AbstractBenchmark {
+    // Number of Reader threads to create.
     protected final int readers;
+
+    // Number of Writer threads to create.
     protected final int writers;
+
+    // Number of times each reader iterates through the shared collection.
     protected final int readerIterations;
+
+    // Number of times each writer writes to the shared collection. 
     protected final int writerIterations;
+
+    // Amount of milliseconds to wait between read / write operations.
     protected long waitBetweenIterations;
+
+    // Collection that will be used by Readers / Writers to Read / Write to.
     protected Collection<Integer> sharedData;
+    
     protected List<Thread> threads = new ArrayList<Thread>();
     protected final CyclicBarrier barrier;
 
@@ -60,9 +75,19 @@ public abstract class AbstractLockingBenchmark extends AbstractBenchmark {
         }
     }
 
+    /**
+     * The implementor should iterate the given collection with this callaback.
+     */
     protected abstract void iterate();
+
+    /**
+     * The implementor should add the given item to the collection with this callback.
+     */
     protected abstract void write(int i);
 
+    /**
+     * Implements a "Reader"
+     */
     private final class Reader implements Runnable {
         @Override
         public void run() {
@@ -82,6 +107,9 @@ public abstract class AbstractLockingBenchmark extends AbstractBenchmark {
         }
     }
 
+    /**
+     * Implements a "Writer" 
+     */
     private final class Writer implements Runnable {
         @Override
         public void run() {

@@ -11,13 +11,15 @@ public final class SynchronizationBasedReaderWriterBenchmark extends AbstractLoc
 
     @Override
     protected void iterate() {
-        // Acquire lock and iterate.
+        // Acquire lock and iterate. This will lock other readers as well as
+        // writers.
         synchronized (sharedData) {
             Iterator<Integer> itr = sharedData.iterator();
             while (itr.hasNext()) {
                 itr.next();
 
-                // This makes the benchmark more consistent
+                // This will magnify the effect of contention as we are sleeping
+                // within synchronized block.
                 try {
                     Thread.sleep(waitBetweenIterations);
                 } catch (InterruptedException e) {
@@ -29,11 +31,11 @@ public final class SynchronizationBasedReaderWriterBenchmark extends AbstractLoc
 
     @Override
     protected void write(int i) {
-        // Acquire lock and add.
+        // Acquire lock and add. This will lock other readers as well as
+        // writers.
         synchronized (sharedData) {
             sharedData.add(i);
 
-            // This makes the benchmark more consistent
             try {
                 Thread.sleep(waitBetweenIterations);
             } catch (InterruptedException e) {
