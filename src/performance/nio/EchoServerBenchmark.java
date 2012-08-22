@@ -62,6 +62,11 @@ public final class EchoServerBenchmark extends AbstractBenchmark {
         }
     }
 
+    /**
+     * Simulates a client for the Echo Server by connecting to it and sending a
+     * series of request to it and waiting for each request to be responded a
+     * response before sending subsequent request.
+     */
     private final class ClientSimulator implements Runnable {
         @Override
         public void run() {
@@ -81,11 +86,20 @@ public final class EchoServerBenchmark extends AbstractBenchmark {
                 BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(s.getOutputStream()));
 
                 for (int i = 1; i <= iterations; i++) {
+                    // Send a request.
                     writer.write("Hello " + i + "\n");
                     writer.flush();
+
+                    // Wait for the response to be written. Note that we are not
+                    // really validating the response, although that is also
+                    // possible.
                     reader.readLine();
 
+                    // Wait for some time before sending another request.
                     if (waitBetweenIterations) {
+                        // LockSupport is the class that allows you to sleep
+                        // (similar to Thread.sleep) with nano seconds
+                        // precision.
                         LockSupport.parkNanos(waitDuration);
                     }
                 }

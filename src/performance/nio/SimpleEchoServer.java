@@ -10,6 +10,9 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.Executor;
 
+/**
+ * A simple implementation of EchoServer using conventional sockets.
+ */
 public final class SimpleEchoServer implements Runnable, EchoServer {
     protected Executor executor;
     protected ServerSocket server;
@@ -50,20 +53,25 @@ public final class SimpleEchoServer implements Runnable, EchoServer {
 
     @Override
     public void run() {
+        // Unless stopped, try to accept a client connection and delegate to an
+        // independent thread to handle this client.
         while (!stopped) {
             try {
                 Socket client = server.accept();
                 executor.execute(new ProtocolHandler(client));
             } catch (IOException e) {
-                //e.printStackTrace();
+                // e.printStackTrace();
                 return;
             }
         }
     }
 
+    /**
+     * Handles the client requests and responds to them. 
+     */
     private static final class ProtocolHandler implements Runnable {
         private final Socket socket;
-        
+
         public ProtocolHandler(Socket socket) {
             super();
             this.socket = socket;
@@ -72,10 +80,11 @@ public final class SimpleEchoServer implements Runnable, EchoServer {
         @Override
         public void run() {
             try {
-                //System.out.println("Handling client at " + socket.getInetAddress().getHostAddress() + ":"  + socket.getPort());
-                BufferedReader reader =  new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                BufferedWriter writer =  new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+                BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
                 String line = reader.readLine();
+
+                // Repeat until client disconnects.
                 while (line != null) {
                     writer.write("Server: " + line + "\n");
                     writer.flush();
