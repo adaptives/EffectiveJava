@@ -1,0 +1,8 @@
+This package has various benchmarks to demonstrate various strategies for improving performance in Java Programming Language.
+
+The examples have been categorised into,
+
+* Atomic - performace.atomic package lists example for Lock-Free concurrency.
+* I/O - performance.io package lists example for performance benefits of Buffered I/O
+* Locking - performance.locking lists a benchmark for comparing benefits of Read-Write locks over simple synchronization.
+* NIO - performance.nio demonstrates how NIO can be used for performing non blocking I/O as well as how it can help building scalable network applications.

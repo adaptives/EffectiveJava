@@ -15,13 +15,16 @@ public final class ReadWriteLockBasedReaderWriterBenchmark extends AbstractLocki
 
     @Override
     protected void iterate() {
-        // Acquire lock and iterate.
+        // Acquire lock and iterate. This will block anyone willing to acquire
+        // the write lock, but allows anyone to create a read lock.
         lock.readLock().lock();
         try {
             Iterator<Integer> itr = sharedData.iterator();
             while (itr.hasNext()) {
                 itr.next();
-                // This makes the benchmark more consistent
+
+                // This will magnify the effect of contention as we are sleeping
+                // after acquiring the lock.
                 try {
                     Thread.sleep(waitBetweenIterations);
                 } catch (InterruptedException e) {
@@ -29,18 +32,19 @@ public final class ReadWriteLockBasedReaderWriterBenchmark extends AbstractLocki
                 }
             }
         } finally {
+            // Always release the lock in a finally block to ensure you do not
+            // run into deadlock situation in event of an exception.
             lock.readLock().unlock();
         }
     }
 
     @Override
     protected void write(int i) {
-        // Acquire lock and add.
+        // Acquire lock and add. This will block both threads trying to acquire a read or write lock.
         lock.writeLock().lock();
         try {
             sharedData.add(i);
 
-            // This makes the benchmark more consistent
             try {
                 Thread.sleep(waitBetweenIterations);
             } catch (InterruptedException e) {

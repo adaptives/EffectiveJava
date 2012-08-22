@@ -8,6 +8,9 @@ import java.io.OutputStream;
 
 import performance.Benchmark;
 
+/**
+ * Demonstrates difference between plain I/O and the buffered counter part. 
+ */
 public final class BufferedIoPerformanceDemo {
     public static void main(String[] args) throws IOException {
         int iterations = 1000000;
