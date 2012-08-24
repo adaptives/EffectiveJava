@@ -12,7 +12,7 @@ public final class NioPerformanceDemo {
 
     public static void main(String[] args) throws Exception {
         int port = 5000;
-        int serverRequestHandlerThreads = 1;
+        int serverRequestHandlerThreads = 2;
         int clientThreads = 100;
         int clientIterations = 10;
         boolean waitBetweenIterations = true;
@@ -23,7 +23,6 @@ public final class NioPerformanceDemo {
 
         for (int i = 1; i <= 5; i++) {
             EchoServer server = new SimpleEchoServer(executor, port);
-            server.start();
             EchoServerBenchmark b = new EchoServerBenchmark(server, clientThreads, clientIterations, port, waitBetweenIterations,
                     waitDuration);
             b.run();
